@@ -31,12 +31,13 @@ export const registerValidator = validate(
             trim: true,
             custom: {
                 options: async (value, { req }) => {
-                    const result = await userService.checkEmailExist(value).then((isExist) => {
+                    const result = await userService.checkEmailExist(value).then((isExist: boolean) => {
                         if (isExist) {
                             throw new Error('Email already exists')
                         }
                         return true
                     })
+
                     return result
                 }
             }
