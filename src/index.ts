@@ -1,7 +1,7 @@
 import express from 'express'
 import usersRouter from './routes/users.routes'
 import databaseService from './services/database.services'
-import { ErrorRequestHandler } from 'express'
+import { errorHandler } from './middlewares/error.middlewares'
 const app = express()
 const port = 3000
 
@@ -10,11 +10,6 @@ app.use('/users', usersRouter)
 databaseService.connect()
 
 // handler error
-
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-    console.log(err.message)
-    res.status(400).json({ message: err.message })
-}
 
 app.use(errorHandler)
 

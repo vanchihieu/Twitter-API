@@ -1,6 +1,9 @@
 import { validate } from './../utils/validation'
 import { Request, Response, NextFunction } from 'express'
 import { checkSchema } from 'express-validator'
+import { HTTP_STATUS } from '~/constants/httpStatus'
+import { USER_MESSAGES } from '~/constants/messages'
+import { ErrorWithStatus } from '~/models/Errors'
 import userService from '~/services/user.services'
 
 export const loginValidator = (req: Request, res: Response, next: NextFunction) => {
@@ -30,10 +33,13 @@ export const registerValidator = validate(
             errorMessage: 'Invalid email',
             trim: true,
             custom: {
-                options: async (value, { req }) => {
+                options: async (value) => {
                     const result = await userService.checkEmailExist(value).then((isExist: boolean) => {
                         if (isExist) {
-                            throw new Error('Email already exists')
+                            throw new ErrorWithStatus({
+                                message: USER_MESSAGES.EMAIL_ALREADY_EXISTS,
+                                status: HTTP_STATUS.BAD_REQUEST
+                            })
                         }
                         return true
                     })

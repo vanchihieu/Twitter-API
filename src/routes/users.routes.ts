@@ -13,11 +13,6 @@ usersRouter.post('/login', loginValidator, loginController)
  * Body: { email: string, password: string }
  */
 
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-    console.log(err.message)
-    res.status(400).json({ message: err.message })
-}
-
 usersRouter.post('/register', registerValidator, wrapRequestHandler(registerController))
 
 export default usersRouter
