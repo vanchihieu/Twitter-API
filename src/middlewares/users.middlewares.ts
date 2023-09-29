@@ -1,36 +1,69 @@
 import { validate } from './../utils/validation'
-import { Request, Response, NextFunction } from 'express'
 import { checkSchema } from 'express-validator'
 import { HTTP_STATUS } from '~/constants/httpStatus'
 import { USER_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
+import databaseService from '~/services/database.services'
 import userService from '~/services/user.services'
 
-export const loginValidator = (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body
-    if (!email || !password) {
-        res.status(400).json({
-            message: 'Missing email or password'
-        })
-    }
-    next()
-}
+export const loginValidator = validate(
+    checkSchema({
+        email: {
+            isEmail: { errorMessage: USER_MESSAGES.EMAIL_IS_INVALID },
+            trim: true,
+            custom: {
+                options: async (value, { req }) => {
+                    const user = await databaseService.users.find({ email: value })
+                    if (!user) {
+                        throw new ErrorWithStatus({
+                            message: USER_MESSAGES.EMAIL_IS_NOT_EXISTS,
+                            status: HTTP_STATUS.BAD_REQUEST
+                        })
+                    }
+                    req.user = user
+
+                    return true
+                }
+            }
+        },
+
+        password: {
+            notEmpty: {
+                errorMessage: USER_MESSAGES.PASSWORD_IS_REQUIRED
+            },
+            isString: {
+                errorMessage: USER_MESSAGES.PASSWORD_MUST_BE_A_STRING
+            },
+            trim: true,
+            isLength: {
+                errorMessage: USER_MESSAGES.PASSWORD_LENGTH_MUST_BE_FROM_6_TO_50,
+                options: {
+                    min: 6,
+                    max: 50
+                }
+            }
+        }
+    })
+)
 
 export const registerValidator = validate(
     checkSchema({
         name: {
-            notEmpty: true,
-            isString: true,
+            notEmpty: {
+                errorMessage: USER_MESSAGES.NAME_IS_REQUIRED
+            },
+            isString: {
+                errorMessage: USER_MESSAGES.NAME_MUST_BE_A_STRING
+            },
             isLength: {
                 options: { min: 3, max: 255 },
-                errorMessage: 'Name should be at least 3 chars'
+                errorMessage: USER_MESSAGES.NAME_LENGTH_MUST_BE_FROM_2_TO_100
             },
             trim: true
         },
         email: {
-            notEmpty: true,
-            isEmail: true,
-            errorMessage: 'Invalid email',
+            notEmpty: { errorMessage: USER_MESSAGES.EMAIL_IS_REQUIRED },
+            isEmail: { errorMessage: USER_MESSAGES.EMAIL_IS_INVALID },
             trim: true,
             custom: {
                 options: async (value) => {
@@ -49,11 +82,11 @@ export const registerValidator = validate(
             }
         },
         password: {
-            notEmpty: true,
-            isString: true,
+            notEmpty: { errorMessage: USER_MESSAGES.PASSWORD_IS_REQUIRED },
+            isString: { errorMessage: USER_MESSAGES.PASSWORD_MUST_BE_A_STRING },
             isLength: {
                 options: { min: 6, max: 50 },
-                errorMessage: 'Password should be at least 6 chars'
+                errorMessage: USER_MESSAGES.PASSWORD_LENGTH_MUST_BE_FROM_6_TO_50
             }
             // isStrongPassword: {
             //   options:{
@@ -73,16 +106,16 @@ export const registerValidator = validate(
             // }
         },
         confirm_password: {
-            notEmpty: true,
-            isString: true,
+            notEmpty: { errorMessage: USER_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED },
+            isString: { errorMessage: USER_MESSAGES.CONFIRM_PASSWORD_MUST_BE_A_STRING },
             isLength: {
                 options: { min: 6, max: 50 },
-                errorMessage: 'Confirm Password should be at least 6 chars'
+                errorMessage: USER_MESSAGES.CONFIRM_PASSWORD_MUST_BE_FROM_6_TO_50
             },
             custom: {
                 options: (value, { req }) => {
                     if (value !== req.body.password) {
-                        throw new Error('Password confirmation does not match password')
+                        throw new Error(USER_MESSAGES.CONFIRM_PASSWORD_MUST_BE_EQUAL_TO_PASSWORD)
                     }
                     return true
                 }
@@ -95,7 +128,7 @@ export const registerValidator = validate(
                     strictSeparator: true
                 }
             },
-            errorMessage: 'Invalid date of birth'
+            errorMessage: USER_MESSAGES.DATE_OF_BIRTH_MUST_BE_A_ISO8601
         }
     })
 )
