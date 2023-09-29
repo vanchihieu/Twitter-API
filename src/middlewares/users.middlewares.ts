@@ -5,6 +5,7 @@ import { USER_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import databaseService from '~/services/database.services'
 import userService from '~/services/user.services'
+import { hashPassword } from '~/utils/crypto'
 
 export const loginValidator = validate(
     checkSchema({
@@ -13,7 +14,10 @@ export const loginValidator = validate(
             trim: true,
             custom: {
                 options: async (value, { req }) => {
-                    const user = await databaseService.users.find({ email: value })
+                    const user = await databaseService.users.find({
+                        email: value,
+                        password: hashPassword(req.body.password)
+                    })
                     if (!user) {
                         throw new ErrorWithStatus({
                             message: USER_MESSAGES.EMAIL_IS_NOT_EXISTS,

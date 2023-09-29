@@ -6,7 +6,8 @@ import { signToken } from '~/utils/jwt'
 import { TokenType, UserVerifyStatus } from '~/constants/enum'
 import { RefreshToken } from '~/models/schemas/RefreshToken.schema'
 import { ObjectId } from 'mongodb'
-
+import { config } from 'dotenv'
+config()
 class UserService {
     private signAccessToken(user_id: string) {
         return signToken({
@@ -37,7 +38,7 @@ class UserService {
             payload: { user_id, token_type: TokenType.AccessToken, verify },
             privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
             options: {
-                expiresIn: process.env.ACCESS_EXPRIES_IN
+                expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN
             }
         })
     }
@@ -47,7 +48,7 @@ class UserService {
             payload: { user_id, token_type: TokenType.RefreshToken, verify },
             privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
             options: {
-                expiresIn: process.env.REFRESH_EXPRIES_IN
+                expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN
             }
         })
     }
@@ -72,7 +73,12 @@ class UserService {
             this.signAccessToken(user_id),
             this.signRefreshToken(user_id)
         ])
-
+        await databaseService.refreshToken.insertOne(
+            new RefreshToken({
+                user_id: new ObjectId(user_id),
+                token: refresh_token as string
+            })
+        )
         return {
             access_token,
             refresh_token
@@ -86,6 +92,7 @@ class UserService {
 
     async login({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
         const [access_token, refresh_token] = await this.generateAccessRefreshToken({ user_id, verify })
+
         await databaseService.refreshToken.insertOne(
             new RefreshToken({ token: refresh_token, user_id: new ObjectId(user_id) })
         )
