@@ -47,7 +47,7 @@ export const loginValidator = validate(
                 }
             }
         }
-    })
+    }, ['body'])
 )
 
 export const registerValidator = validate(
@@ -134,5 +134,26 @@ export const registerValidator = validate(
             },
             errorMessage: USER_MESSAGES.DATE_OF_BIRTH_MUST_BE_A_ISO8601
         }
-    })
+    }, ['body'])
+)
+
+export const accessTokenValidator = validate(
+    checkSchema({
+       Authorization:{
+        notEmpty: { errorMessage: USER_MESSAGES.ACCESS_TOKEN_IS_REQUIRED },
+        custom: {
+            options: async (value, { req }) => {
+                const access_token = value.split(' ')[1]
+                if(access_token === ''){
+                    throw new Error(USER_MESSAGES.ACCESS_TOKEN_IS_REQUIRED)
+                }
+                const user = await databaseService.users.findOne({access_token})
+                if(user === null){
+                    throw new Error(USER_MESSAGES.ACCESS_TOKEN_IS_REQUIRED)
+                }
+            }
+        }
+       },
+    }, ['headers'])
+)
 )
