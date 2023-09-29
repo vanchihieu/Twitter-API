@@ -1,12 +1,14 @@
 import User from '~/models/schemas/User.schema'
 import databaseService from './database.services'
-import { RegisterReqBody } from '~/models/requests/User.requests'
+import { RegisterBody } from '~/models/requests/User.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import { TokenType, UserVerifyStatus } from '~/constants/enum'
 import { RefreshToken } from '~/models/schemas/RefreshToken.schema'
 import { ObjectId } from 'mongodb'
 import { config } from 'dotenv'
+import { HTTP_STATUS } from '~/constants/httpStatus'
+import { success } from '~/utils/returnDataSuccess'
 config()
 class UserService {
     private signAccessToken(user_id: string) {
@@ -59,7 +61,7 @@ class UserService {
             this.generateRefreshToken({ user_id, verify })
         ])
     }
-    async register(payload: RegisterReqBody) {
+    async register(payload: RegisterBody) {
         const result = await databaseService.users.insertOne(
             new User({
                 ...payload,
@@ -97,6 +99,11 @@ class UserService {
             new RefreshToken({ token: refresh_token, user_id: new ObjectId(user_id) })
         )
         return [access_token, refresh_token]
+    }
+
+    async logout(user_id: string) {
+        await databaseService.refreshToken.deleteMany({ user_id: new ObjectId(user_id) })
+        return success('Logout is successfully')
     }
 }
 

@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 import userService from '~/services/user.services'
 import { ParamsDictionary } from 'express-serve-static-core'
-import { RegisterReqBody } from '~/models/requests/User.requests'
+
 import { USER_MESSAGES } from '~/constants/messages'
 import { HTTP_STATUS } from '~/constants/httpStatus'
 import User from '~/models/schemas/User.schema'
 import { success } from '~/utils/returnDataSuccess'
+import { LogoutBody, RegisterBody } from '~/models/requests/User.requests'
 
 export const loginController = async (req: Request, res: Response) => {
     const { _id, verify } = req.user as User
@@ -20,7 +21,7 @@ export const loginController = async (req: Request, res: Response) => {
     )
 }
 export const registerController = async (
-    req: Request<ParamsDictionary, any, RegisterReqBody>,
+    req: Request<ParamsDictionary, any, RegisterBody>,
     res: Response,
     next: NextFunction
 ) => {
@@ -29,4 +30,10 @@ export const registerController = async (
         message: USER_MESSAGES.REGISTER_SUCCESS,
         result
     })
+}
+
+export const logoutController = async (req: Request<ParamsDictionary, any, LogoutBody>, res: Response) => {
+    const { refresh_token } = req.body
+    const response = await userService.logout(refresh_token)
+    res.status(HTTP_STATUS.OK).json(response)
 }
