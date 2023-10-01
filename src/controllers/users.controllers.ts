@@ -38,8 +38,14 @@ export const logoutController = async (req: Request<ParamsDictionary, any, Logou
     res.status(HTTP_STATUS.OK).json(response)
 }
 
-export const emailVerifyValidator = async (req: Request, res: Response) => {
+export const verifyEmailController = async (req: Request, res: Response) => {
     const { decoded_email_verify_token } = req.body
     const response = await userService.verifyEmailToken(decoded_email_verify_token as TokenPayload)
+    res.status(HTTP_STATUS.OK).json(response)
+}
+
+export const resendVerifyEmailController = async (req: Request, res: Response) => {
+    const { user_id } = req.decoded_authorization as TokenPayload
+    const response = await userService.resendVerifyEmailToken(user_id)
     res.status(HTTP_STATUS.OK).json(response)
 }

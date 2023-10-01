@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import { access } from 'fs'
 import {
-    emailVerifyValidator,
     loginController,
     logoutController,
-    registerController
+    registerController,
+    resendVerifyEmailController,
+    verifyEmailController
 } from '~/controllers/users.controllers'
 import {
     accessTokenValidator,
@@ -50,6 +50,15 @@ usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapReq
  * Body: { email_refresh_token: string }
  */
 
-usersRouter.post('/verify-email', emailVerifyTokenValidator, wrapRequestHandler(emailVerifyValidator))
+usersRouter.post('/verify-email', emailVerifyTokenValidator, wrapRequestHandler(verifyEmailController))
+
+/**
+ * Description: verify email when user client click on link in email
+ * Path: /resend-verify-email
+ * Method: POST
+ * Headers: { Authorization: Bearer <access_token> }
+ * Body: { email_refresh_token: string }
+ */
+usersRouter.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler(resendVerifyEmailController))
 
 export default usersRouter

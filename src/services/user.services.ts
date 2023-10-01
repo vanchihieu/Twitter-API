@@ -165,6 +165,32 @@ class UserService {
             message: USER_MESSAGES.EMAIL_VERIFY_IS_SUCCESSFULLY
         }
     }
+
+    async resendVerifyEmailToken(user_id: string) {
+        const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) })
+        if (!user) {
+            console.log('Check NOT FOUND')
+            throw new ErrorWithStatus({ message: USER_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+        }
+        if (user.verify === UserVerifyStatus.Verified) {
+            console.log('Check VERYFIED')
+            throw new ErrorWithStatus({
+                message: USER_MESSAGES.EMAIL_ALREADY_VERIFY_BEFORE,
+                status: HTTP_STATUS.OK
+            })
+        }
+
+        const verify_email_token = await this.generateVerifyEmailToken({ user_id, verify: UserVerifyStatus.Unverified })
+        await databaseService.users.updateOne(
+            { _id: new ObjectId(user_id) },
+            {
+                $set: { email_verify_token: verify_email_token },
+                $currentDate: { updated_at: true }
+            }
+        )
+        console.log(verify_email_token)
+        return success('Resend email is successfully')
+    }
 }
 
 const userService = new UserService()
