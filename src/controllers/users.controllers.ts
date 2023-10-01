@@ -6,7 +6,7 @@ import { USER_MESSAGES } from '~/constants/messages'
 import { HTTP_STATUS } from '~/constants/httpStatus'
 import User from '~/models/schemas/User.schema'
 import { success } from '~/utils/returnDataSuccess'
-import { LogoutBody, RegisterBody } from '~/models/requests/User.requests'
+import { LogoutBody, RegisterBody, TokenPayload } from '~/models/requests/User.requests'
 
 export const loginController = async (req: Request, res: Response) => {
     const { _id, verify } = req.user as User
@@ -35,5 +35,11 @@ export const registerController = async (
 export const logoutController = async (req: Request<ParamsDictionary, any, LogoutBody>, res: Response) => {
     const { refresh_token } = req.body
     const response = await userService.logout(refresh_token)
+    res.status(HTTP_STATUS.OK).json(response)
+}
+
+export const emailVerifyValidator = async (req: Request, res: Response) => {
+    const { decoded_email_verify_token } = req.body
+    const response = await userService.verifyEmailToken(decoded_email_verify_token as TokenPayload)
     res.status(HTTP_STATUS.OK).json(response)
 }

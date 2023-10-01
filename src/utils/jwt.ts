@@ -4,16 +4,19 @@ import { TokenPayload } from '~/models/requests/User.requests'
 config()
 const signToken = ({
     payload,
-    privateKey = process.env.JWT_SECRET as string,
+    privateKey,
     options = {
         algorithm: 'HS256'
     }
 }: {
     payload: string | Buffer | object
-    privateKey?: string
+    privateKey: string
     options?: SignOptions
 }) => {
     return new Promise<string>((resolve, reject) => {
+        if (!privateKey) {
+            throw new Error('Private key is undefined')
+        }
         jwt.sign(payload, privateKey, options || {}, (err: Error | null, token?: string) => {
             if (err) throw reject(err)
             return resolve(token as string)
