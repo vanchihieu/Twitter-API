@@ -1,5 +1,5 @@
 import { HTTP_STATUS } from '~/constants/httpStatus'
-import { USER_MESSAGES } from '~/constants/messages'
+import { USERS_MESSAGES } from '~/constants/messages'
 
 type ErrorsType = Record<
     string,
@@ -19,9 +19,10 @@ class ErrorWithStatus {
 }
 
 class Entity extends ErrorWithStatus {
+    // return status 422: validate error
     errors: ErrorsType
     constructor({
-        message = USER_MESSAGES.VALIDATION_ERROR,
+        message = USERS_MESSAGES.VALIDATION_ERROR,
         status = HTTP_STATUS.UNPROCESSABLE_ENTITY,
         errors
     }: {

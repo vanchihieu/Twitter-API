@@ -1,10 +1,11 @@
 import { Collection, Db, MongoClient } from 'mongodb'
 import { config } from 'dotenv'
 import User from '~/models/schemas/User.schema'
-import { RefreshToken } from '~/models/schemas/RefreshToken.schema'
+import RefreshToken from '~/models/schemas/RefreshToken.schema'
 config()
 
-const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@twitter.waln3ff.mongodb.net/?retryWrites=true&w=majority`
+// const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@twitter.waln3ff.mongodb.net/?retryWrites=true&w=majority`
+const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.b5osxw4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
 
 class DatabaseService {
     private client: MongoClient

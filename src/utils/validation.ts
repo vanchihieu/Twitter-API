@@ -18,7 +18,7 @@ export const validate = (validations: RunnableValidationChains<ValidationChain>)
             return next()
         }
         const objectErrors = errors.mapped()
-        const entityErrors = new Entity({ errors: {} })
+        const entityErrors = new Entity({ errors: {} }) // trả về lỗi 422
         const errorStatus = new ErrorWithStatus({ message: '', status: 400 })
         for (const key in objectErrors) {
             const { msg } = objectErrors[key]

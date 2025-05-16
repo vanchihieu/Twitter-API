@@ -1,3 +1,4 @@
+import { log } from 'console'
 import { config } from 'dotenv'
 import jwt, { SignOptions } from 'jsonwebtoken'
 import { TokenPayload } from '~/models/requests/User.requests'
@@ -19,6 +20,7 @@ const signToken = ({
         }
         jwt.sign(payload, privateKey, options || {}, (err: Error | null, token?: string) => {
             if (err) throw reject(err)
+
             return resolve(token as string)
         })
     })
