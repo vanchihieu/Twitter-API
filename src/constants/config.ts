@@ -2,7 +2,7 @@ import { config } from 'dotenv'
 import fs from 'fs'
 import path from 'path'
 
-const env = process.env.NODE_ENV
+const env = process.env.NODE_ENV1
 const envFilename = `.env.${env}`
 
 if (!env) {

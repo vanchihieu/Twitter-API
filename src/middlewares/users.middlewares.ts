@@ -523,3 +523,12 @@ export const updateMeValidator = validate(
         ['body']
     )
 )
+
+export const followValidator = validate(
+    checkSchema(
+        {
+            followed_user_id: userIdSchema
+        },
+        ['body']
+    )
+)
