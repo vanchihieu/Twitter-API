@@ -80,6 +80,10 @@ export interface ResetPasswordReqBody {
     forgot_password_token: string
 }
 
+export interface GetProfileReqParams extends ParamsDictionary {
+    username: string
+}
+
 export interface UpdateMeReqBody {
     name?: string
     date_of_birth?: string
