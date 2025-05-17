@@ -12,6 +12,7 @@ export default class Follower {
     user_id: ObjectId
     followed_user_id: ObjectId
     created_at?: Date
+
     constructor({ _id, user_id, created_at, followed_user_id }: FollowerType) {
         this._id = _id
         this.followed_user_id = followed_user_id
