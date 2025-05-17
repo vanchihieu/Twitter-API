@@ -1,4 +1,3 @@
-import { log } from 'console'
 import { config } from 'dotenv'
 import jwt, { SignOptions } from 'jsonwebtoken'
 import { TokenPayload } from '~/models/requests/User.requests'
