@@ -12,8 +12,9 @@ export enum TokenType {
 }
 
 export enum MediaType {
-    Image, // 0
-    Video // 1
+    Image,
+    Video,
+    HLS
 }
 
 export enum TweetType {
