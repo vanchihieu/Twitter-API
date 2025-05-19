@@ -4,6 +4,7 @@ import databaseService from './services/database.services'
 import { errorHandler } from './middlewares/error.middlewares'
 import mediasRouter from '~/routes/medias.routes'
 import { initFolder } from '~/utils/file'
+import staticRouter from '~/routes/static.routes'
 
 const app = express()
 const port = 3000
@@ -13,6 +14,7 @@ initFolder()
 app.use(express.json())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
+app.use('/static', staticRouter)
 
 databaseService.connect()
 
