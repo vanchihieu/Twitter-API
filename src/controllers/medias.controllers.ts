@@ -5,7 +5,7 @@ import { HTTP_STATUS } from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
 import mediasService from '~/services/medias.services'
 import fs from 'fs'
-import mime from 'mime'
+// import mime from 'mime'
 
 export const uploadImageController = async (req: Request, res: Response, next: NextFunction) => {
     // const form = formidable({
@@ -84,7 +84,7 @@ export const serveVideoStreamController = (req: Request, res: Response, next: Ne
     // Dung lượng thực tế cho mỗi đoạn video stream
     // THường đây sẽ là chunkSize, ngoại trừ đoạn cuối cùng
     const contentLength = end - start + 1
-    const contentType = mime.getType(videoPath) || 'video/*'
+    // const contentType = mime.getType(videoPath) || 'video/*'
 
     /**
      * Format của header Content-Range: bytes <start>-<end>/<videoSize>
@@ -107,8 +107,8 @@ export const serveVideoStreamController = (req: Request, res: Response, next: Ne
     const headers = {
         'Content-Range': `bytes ${start}-${end}/${videoSize}`,
         'Accept-Ranges': 'bytes',
-        'Content-Length': contentLength,
-        'Content-Type': contentType
+        'Content-Length': contentLength
+        // 'Content-Type': contentType
     }
 
     res.writeHead(HTTP_STATUS.PARTIAL_CONTENT, headers)

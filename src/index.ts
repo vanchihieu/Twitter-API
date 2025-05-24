@@ -18,9 +18,9 @@ app.use('/medias', mediasRouter)
 app.use('/static', staticRouter)
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 
-
-databaseService.connect()
-
+databaseService.connect().then(() => {
+    databaseService.indexUsers()
+})
 // handler error
 
 app.use(errorHandler)
