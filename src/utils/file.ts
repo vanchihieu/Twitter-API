@@ -61,6 +61,7 @@ export const handleUploadVideo = async (req: Request) => {
     const idName = nanoId()
     const folderPath = path.resolve(UPLOAD_VIDEO_DIR, idName)
     fs.mkdirSync(folderPath)
+
     const form = formidable({
         uploadDir: folderPath,
         maxFiles: 1,

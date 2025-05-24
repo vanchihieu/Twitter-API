@@ -116,3 +116,11 @@ export const serveVideoStreamController = (req: Request, res: Response, next: Ne
     const videoSteams = fs.createReadStream(videoPath, { start, end })
     videoSteams.pipe(res)
 }
+
+export const uploadVideoController = async (req: Request, res: Response, next: NextFunction) => {
+    const url = await mediasService.uploadVideo(req)
+    return res.json({
+        message: USERS_MESSAGES.UPLOAD_SUCCESS,
+        result: url
+    })
+}
