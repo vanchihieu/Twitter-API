@@ -20,6 +20,8 @@ app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 
 databaseService.connect().then(() => {
     databaseService.indexUsers()
+    databaseService.indexRefreshTokens()
+    databaseService.indexFollowers()
 })
 // handler error
 

@@ -37,6 +37,34 @@ class DatabaseService {
         }
     }
 
+    async indexRefreshTokens() {
+        const exists = await this.refreshTokens.indexExists(['exp_1', 'token_1'])
+
+        if (!exists) {
+            this.refreshTokens.createIndex({ token: 1 })
+            this.refreshTokens.createIndex(
+                { exp: 1 },
+                {
+                    expireAfterSeconds: 0
+                }
+            )
+        }
+    }
+
+    // async indexVideoStatus() {
+    //     const exists = await this.videoStatus.indexExists(['name_1'])
+
+    //     if (!exists) {
+    //         this.videoStatus.createIndex({ name: 1 })
+    //     }
+    // }
+
+    async indexFollowers() {
+        const exists = await this.followers.indexExists(['user_id_1_followed_user_id_1'])
+        if (!exists) {
+            this.followers.createIndex({ user_id: 1, followed_user_id: 1 })
+        }
+    }
     get users(): Collection<User> {
         return this.db.collection(process.env.DB_USERS_COLLECTION as string)
     }
