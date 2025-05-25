@@ -4,6 +4,8 @@ import User from '~/models/schemas/User.schema'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import { envConfig } from '~/constants/config'
 import Follower from '~/models/schemas/Follower.schema'
+import Tweet from '~/models/schemas/Tweet.schema'
+import Hashtag from '~/models/schemas/Hashtag.schema'
 config()
 
 // const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@twitter.waln3ff.mongodb.net/?retryWrites=true&w=majority`
@@ -79,6 +81,14 @@ class DatabaseService {
 
     get refreshTokens(): Collection<RefreshToken> {
         return this.db.collection(process.env.DB_REFRESH_TOKENS_COLLECTION as string)
+    }
+
+    get tweets(): Collection<Tweet> {
+        return this.db.collection(process.env.DB_TWEETS_COLLECTION as string)
+    }
+
+    get hashtags(): Collection<Hashtag> {
+        return this.db.collection(process.env.DB_HASHTAGS_COLLECTION as string)
     }
 }
 

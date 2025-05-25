@@ -6,9 +6,16 @@ import mediasRouter from '~/routes/medias.routes'
 import { initFolder } from '~/utils/file'
 import staticRouter from '~/routes/static.routes'
 import { UPLOAD_VIDEO_DIR } from '~/constants/dir'
+import tweetsRouter from '~/routes/tweets.routes'
 
 const app = express()
 const port = 3000
+
+databaseService.connect().then(() => {
+    databaseService.indexUsers()
+    databaseService.indexRefreshTokens()
+    databaseService.indexFollowers()
+})
 
 // Tạo folder upload
 initFolder()
@@ -17,14 +24,9 @@ app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use('/static', staticRouter)
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
+app.use('/tweets', tweetsRouter)
 
-databaseService.connect().then(() => {
-    databaseService.indexUsers()
-    databaseService.indexRefreshTokens()
-    databaseService.indexFollowers()
-})
 // handler error
-
 app.use(errorHandler)
 
 app.listen(port, () => {
