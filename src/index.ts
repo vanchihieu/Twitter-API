@@ -7,6 +7,7 @@ import { initFolder } from '~/utils/file'
 import staticRouter from '~/routes/static.routes'
 import { UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import tweetsRouter from '~/routes/tweets.routes'
+import bookmarksRouter from '~/routes/bookmarks.routes'
 
 const app = express()
 const port = 3000
@@ -25,6 +26,7 @@ app.use('/medias', mediasRouter)
 app.use('/static', staticRouter)
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 app.use('/tweets', tweetsRouter)
+app.use('/bookmarks', bookmarksRouter)
 
 // handler error
 app.use(errorHandler)
