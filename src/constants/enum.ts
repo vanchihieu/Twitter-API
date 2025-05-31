@@ -26,5 +26,5 @@ export enum TweetType {
 
 export enum TweetAudience {
     Everyone,
-    TwitterCircle
+    TwitterCircle // 1 - Chỉ bạn bè thân thiết mới xem được
 }
