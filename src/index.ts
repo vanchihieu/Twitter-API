@@ -8,6 +8,8 @@ import staticRouter from '~/routes/static.routes'
 import { UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import tweetsRouter from '~/routes/tweets.routes'
 import bookmarksRouter from '~/routes/bookmarks.routes'
+import searchRouter from '~/routes/search.routes'
+// import '~/utils/fake' // Import this to run the fake data generation script
 
 const app = express()
 const port = 3000
@@ -16,6 +18,7 @@ databaseService.connect().then(() => {
     databaseService.indexUsers()
     databaseService.indexRefreshTokens()
     databaseService.indexFollowers()
+    databaseService.indexTweets()
 })
 
 // Tạo folder upload
@@ -26,6 +29,7 @@ app.use('/medias', mediasRouter)
 app.use('/static', staticRouter)
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 app.use('/tweets', tweetsRouter)
+app.use('/search', searchRouter)
 app.use('/bookmarks', bookmarksRouter)
 
 // handler error

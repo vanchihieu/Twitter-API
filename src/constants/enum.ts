@@ -28,3 +28,13 @@ export enum TweetAudience {
     Everyone,
     TwitterCircle // 1 - Chỉ bạn bè thân thiết mới xem được
 }
+
+export enum PeopleFollow {
+    Anyone = '0',
+    Following = '1'
+}
+
+export enum MediaTypeQuery {
+    Image = 'image',
+    Video = 'video'
+}
