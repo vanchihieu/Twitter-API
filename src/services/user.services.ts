@@ -14,7 +14,7 @@ import { ErrorWithStatus } from '~/models/Errors'
 import { log } from 'console'
 import { envConfig } from '~/constants/config'
 import Follower from '~/models/schemas/Follower.schema'
-// import { sendForgotPasswordEmail, sendVerifyRegisterEmail } from '~/utils/email'
+import { sendForgotPasswordEmail, sendVerifyRegisterEmail } from '~/utils/email'
 config()
 class UserService {
     private signAccessToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
@@ -117,7 +117,7 @@ class UserService {
         // 3. Client send request to server with email_verify_token
         // 4. Server verify email_verify_token
         // 5. Client receive access_token and refresh_token
-        // await sendVerifyRegisterEmail(payload.email, email_verify_token)
+        await sendVerifyRegisterEmail(payload.email, email_verify_token)
         return {
             access_token,
             refresh_token
