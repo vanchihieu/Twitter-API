@@ -179,7 +179,7 @@ class UserService {
             user_id,
             verify: UserVerifyStatus.Unverified
         })
-        // await sendVerifyRegisterEmail(email, email_verify_token)
+        await sendVerifyRegisterEmail(email, email_verify_token)
 
         // Cập nhật lại giá trị email_verify_token trong document user
         await databaseService.users.updateOne(
@@ -213,7 +213,7 @@ class UserService {
                 }
             }
         ])
-        // await sendForgotPasswordEmail(email, forgot_password_token)
+        await sendForgotPasswordEmail(email, forgot_password_token)
 
         return {
             message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD
