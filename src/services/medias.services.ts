@@ -1,3 +1,4 @@
+import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3'
 import { Request } from 'express'
 import path from 'path'
 import sharp from 'sharp'
@@ -6,6 +7,9 @@ import { UPLOAD_IMAGE_DIR } from '~/constants/dir'
 import { MediaType } from '~/constants/enum'
 import { Media } from '~/models/Other'
 import { getNameFromFullname, handleUploadImage, handleUploadVideo } from '~/utils/file'
+import { uploadFileToS3 } from '~/utils/s3'
+import mime from 'mime'
+import fsPromise from 'fs/promises'
 
 class MediasService {
     async uploadImage(req: Request) {
@@ -19,25 +23,25 @@ class MediasService {
 
                 await sharp(file.filepath).jpeg().toFile(newPath)
 
-                // const s3Result = await uploadFileToS3({
-                //     filename: 'images/' + newFullFilename,
-                //     filepath: newPath,
-                //     contentType: mime.getType(newPath) as string
-                // })
+                const s3Result = await uploadFileToS3({
+                    filename: 'images/' + newFullFilename,
+                    filepath: newPath,
+                    contentType: mime.getType(newPath) as string
+                })
 
-                // await Promise.all([fsPromise.unlink(file.filepath), fsPromise.unlink(newPath)])
-
-                // return {
-                //     url: (s3Result as CompleteMultipartUploadCommandOutput).Location as string,
-                //     type: MediaType.Image
-                // }
+                await Promise.all([fsPromise.unlink(file.filepath), fsPromise.unlink(newPath)])
 
                 return {
-                    url: isProduction
-                        ? `${process.env.HOST}/static/image/${newFullFilename}`
-                        : `http://localhost:${process.env.PORT}/static/image/${newFullFilename}`,
+                    url: (s3Result as CompleteMultipartUploadCommandOutput).Location as string,
                     type: MediaType.Image
                 }
+
+                // return {
+                //     url: isProduction
+                //         ? `${process.env.HOST}/static/image/${newFullFilename}`
+                //         : `http://localhost:${process.env.PORT}/static/image/${newFullFilename}`,
+                //     type: MediaType.Image
+                // }
             })
         )
         return result
@@ -48,24 +52,24 @@ class MediasService {
 
         const result: Media[] = await Promise.all(
             files.map(async (file) => {
-                // const s3Result = await uploadFileToS3({
-                //     filename: 'videos/' + file.newFilename,
-                //     contentType: mime.getType(file.filepath) as string,
-                //     filepath: file.filepath
-                // })
-                // fsPromise.unlink(file.filepath)
-
-                // return {
-                //     url: (s3Result as CompleteMultipartUploadCommandOutput).Location as string,
-                //     type: MediaType.Video
-                // }
+                const s3Result = await uploadFileToS3({
+                    filename: 'videos/' + file.newFilename,
+                    contentType: mime.getType(file.filepath) as string,
+                    filepath: file.filepath
+                })
+                fsPromise.unlink(file.filepath)
 
                 return {
-                    url: isProduction
-                        ? `${process.env.HOST}/static/video/${file.newFilename}`
-                        : `http://localhost:${process.env.PORT}/static/video/${file.newFilename}`,
+                    url: (s3Result as CompleteMultipartUploadCommandOutput).Location as string,
                     type: MediaType.Video
                 }
+
+                // return {
+                //     url: isProduction
+                //         ? `${process.env.HOST}/static/video/${file.newFilename}`
+                //         : `http://localhost:${process.env.PORT}/static/video/${file.newFilename}`,
+                //     type: MediaType.Video
+                // }
             })
         )
         return result
